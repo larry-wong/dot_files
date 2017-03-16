@@ -21,6 +21,18 @@ let g:netrw_winsize = 150
 
 au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
 
+" For syntastic
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_wq = 0
+
+let g:syntastic_javascript_checkers = ['eslint']
+" End for syntax
+
 autocmd BufNewFile *.js,*.css,*.vue exec ":call AddComment()"
 autocmd BufNewFile *.vue exec ":call AddVue()"
 
