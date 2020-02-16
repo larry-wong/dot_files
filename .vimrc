@@ -1,3 +1,19 @@
+" Auto install vim-plug
+if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+" My plugins
+call plug#begin('~/.vim/bundle')
+Plug 'jiangmiao/auto-pairs'
+Plug 'dense-analysis/ale'
+Plug 'lervag/vimtex'
+Plug 'leafgarland/typescript-vim'
+call plug#end()
+" End for plugins
+
 set nu
 syntax on
 set hls
@@ -21,19 +37,20 @@ let g:netrw_winsize = 150
 
 au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
 
-" For syntastic
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
+" For ale
+let g:ale_completion_enabled = 1
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_insert_leave = 0
+let g:ale_fixers = {'typescript': ['eslint']}
+let g:ale_fix_on_save = 1
+" End for ale
 
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_wq = 0
+" For vimtex
+let g:tex_flavor='latex'
+let g:vimtex_view_method='zathura'
+" End for vimtex
 
-let g:syntastic_javascript_checkers = ['eslint']
-" End for syntax
-
-autocmd BufNewFile *.js,*.css,*.vue exec ":call AddComment()"
+autocmd BufNewFile *.js,*.ts,*.css,*.vue,*.ino exec ":call AddComment()"
 autocmd BufNewFile *.vue exec ":call AddVue()"
 
 map <F4> :call AddComment()<cr>'s
@@ -44,11 +61,11 @@ function AddComment()
     call add(content, "#")
     call add(content, "# Copyright (C) ".strftime("%Y")." All rights reserved.")
     call add(content, "#")
-    call add(content, "# Author:\tLarry Wang")
+    call add(content, "# Author:   Larry Wang")
     call add(content, "#")
-    call add(content, "# Created:\t".strftime("%Y-%m-%d %H:%M"))
+    call add(content, "# Created:  ".strftime("%Y-%m-%d %H:%M"))
     call add(content, "#")
-    call add(content, "# Description:\t")
+    call add(content, "# Description:")
     call add(content, "#")
     call add(content, "=============================================================================*/")
     call append(0, content)
@@ -91,3 +108,5 @@ set ttimeoutlen=150
 autocmd InsertLeave * call Fcitx2en()
 autocmd InsertEnter * call Fcitx2zh()
 " End for fcitx
+
+set background=dark

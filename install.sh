@@ -5,8 +5,6 @@ cp .vimrc ~/
 git clone https://github.com/wavded/vim-stylus.git ~/.vim/pack/plugins/start/vim-stylus
 git clone https://github.com/digitaltoad/vim-pug.git ~/.vim/pack/plugins/start/vim-pug
 git clone https://github.com/posva/vim-vue.git ~/.vim/pack/plugins/start/vim-vue
-git clone https://github.com/jiangmiao/auto-pairs.git ~/.vim/pack/plugins/start/auto-pairs
-git clone https://github.com/vim-syntastic/syntastic.git ~/.vim/pack/plugins/start/synaptics
 
 # fontconfig, i3 & termite
 mkdir ~/.config
