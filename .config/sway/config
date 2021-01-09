@@ -14,15 +14,17 @@ set $down j
 set $up k
 set $right l
 # Your preferred terminal emulator
-set $term termite
+set $term alacritty
 # Your preferred application launcher
-# Note: it's recommended that you pass the final command to sway
-set $menu dmenu_path | dmenu | xargs swaymsg exec
+# Note: pass the final command to swaymsg so that the resulting window can be opened
+# on the original workspace that the command was run on.
+set $menu wofi -S run | dmenu_path | dmenu | xargs swaymsg exec --
 
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+# output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+output * bg #1d1f21 solid_color
 #
 # Example configuration:
 #
@@ -30,19 +32,30 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 #
 # You can get the names of your outputs by running: swaymsg -t get_outputs
 
+set $output1 HDMI-A-2
+set $output2 HDMI-A-1
+
+output $output1 pos 0 0
+output $output2 pos 277 1080
+focus output $output1
+
 ### Idle configuration
 #
 # Example configuration:
 #
 # exec swayidle -w \
 #          timeout 300 'swaylock -f -c 000000' \
-#          timeout 600 'swaymsg "output * dpms off"' \
-#               resume 'swaymsg "output * dpms on"' \
+#          timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
 #          before-sleep 'swaylock -f -c 000000'
 #
 # This will lock your screen after 300 seconds of inactivity, then turn off
 # your displays after another 300 seconds, and turn your screens back on when
 # resumed. It will also lock your screen before your computer goes to sleep.
+
+# exec swayidle -w \
+#          timeout 300 'swaylock -f -c 000000' \
+#          timeout 315 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
+#          before-sleep 'swaylock -f -c 000000'
 
 ### Input configuration
 #
@@ -58,17 +71,31 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 # You can get the names of your inputs by running: swaymsg -t get_inputs
 # Read `man 5 sway-input` for more information about this section.
 
+input "type:keyboard" {
+    repeat_delay 500
+    repeat_rate 80
+}
+
+input "type:touchpad" {
+    dwt enabled
+    tap enabled
+    natural_scroll enabled
+    scroll_factor 0.8
+    drag enabled
+    middle_emulation enabled
+}
+
 ### Key bindings
 #
 # Basics:
 #
-    # start a terminal
+    # Start a terminal
     bindsym $mod+Return exec $term
 
-    # kill focused window
+    # Kill focused window
     bindsym $mod+Shift+q kill
 
-    # start your launcher
+    # Start your launcher
     bindsym $mod+d exec $menu
 
     # Drag floating windows by holding down $mod and left mouse button.
@@ -78,10 +105,10 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
     # mouse button for dragging.
     floating_modifier $mod normal
 
-    # reload the configuration file
+    # Reload the configuration file
     bindsym $mod+Shift+c reload
 
-    # exit sway (logs you out of your Wayland session)
+    # Exit sway (logs you out of your Wayland session)
     bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
 #
 # Moving around:
@@ -91,18 +118,18 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
     bindsym $mod+$down focus down
     bindsym $mod+$up focus up
     bindsym $mod+$right focus right
-    # or use $mod+[up|down|left|right]
+    # Or use $mod+[up|down|left|right]
     bindsym $mod+Left focus left
     bindsym $mod+Down focus down
     bindsym $mod+Up focus up
     bindsym $mod+Right focus right
 
-    # _move_ the focused window with the same, but add Shift
+    # Move the focused window with the same, but add Shift
     bindsym $mod+Shift+$left move left
     bindsym $mod+Shift+$down move down
     bindsym $mod+Shift+$up move up
     bindsym $mod+Shift+$right move right
-    # ditto, with arrow keys
+    # Ditto, with arrow keys
     bindsym $mod+Shift+Left move left
     bindsym $mod+Shift+Down move down
     bindsym $mod+Shift+Up move up
@@ -110,30 +137,54 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 #
 # Workspaces:
 #
-    # switch to workspace
-    bindsym $mod+1 workspace 1
-    bindsym $mod+2 workspace 2
-    bindsym $mod+3 workspace 3
-    bindsym $mod+4 workspace 4
-    bindsym $mod+5 workspace 5
-    bindsym $mod+6 workspace 6
-    bindsym $mod+7 workspace 7
-    bindsym $mod+8 workspace 8
-    bindsym $mod+9 workspace 9
-    bindsym $mod+0 workspace 10
-    # move focused container to workspace
-    bindsym $mod+Shift+1 move container to workspace 1
-    bindsym $mod+Shift+2 move container to workspace 2
-    bindsym $mod+Shift+3 move container to workspace 3
-    bindsym $mod+Shift+4 move container to workspace 4
-    bindsym $mod+Shift+5 move container to workspace 5
-    bindsym $mod+Shift+6 move container to workspace 6
-    bindsym $mod+Shift+7 move container to workspace 7
-    bindsym $mod+Shift+8 move container to workspace 8
-    bindsym $mod+Shift+9 move container to workspace 9
-    bindsym $mod+Shift+0 move container to workspace 10
+    set $workspace1 workspace number 1
+    set $workspace2 workspace number 2
+    set $workspace3 workspace number 3
+    set $workspace4 workspace number 4
+    set $workspace5 workspace number 5
+    set $workspace6 workspace number 6
+    set $workspace7 workspace number 7
+    set $workspace8 workspace number 8
+    set $workspace9 workspace number 9
+    set $workspace10 workspace number 10
+
+    # Switch to workspace
+    bindsym $mod+1 $workspace1
+    bindsym $mod+2 $workspace2
+    bindsym $mod+3 $workspace3
+    bindsym $mod+4 $workspace4
+    bindsym $mod+5 $workspace5
+    bindsym $mod+6 $workspace6
+    bindsym $mod+7 $workspace7
+    bindsym $mod+8 $workspace8
+    bindsym $mod+9 $workspace9
+    bindsym $mod+0 $workspace10
+    # Move focused container to workspace
+    bindsym $mod+Shift+1 move container to $workspace1, $workspace1
+    bindsym $mod+Shift+2 move container to $workspace2, $workspace2
+    bindsym $mod+Shift+3 move container to $workspace3, $workspace3
+    bindsym $mod+Shift+4 move container to $workspace4, $workspace4
+    bindsym $mod+Shift+5 move container to $workspace5, $workspace5
+    bindsym $mod+Shift+6 move container to $workspace6, $workspace6
+    bindsym $mod+Shift+7 move container to $workspace7, $workspace7
+    bindsym $mod+Shift+8 move container to $workspace8, $workspace8
+    bindsym $mod+Shift+9 move container to $workspace9, $workspace9
+    bindsym $mod+Shift+0 move container to $workspace10, $workspace10
+
     # Note: workspaces can have any name you want, not just numbers.
     # We just use 1-10 as the default.
+
+    # Bind workspaces to outputs
+    workspace 1 output $output1
+    workspace 2 output $output2
+    workspace 3 output $output1
+    workspace 4 output $output2
+    workspace 5 output $output1
+    workspace 6 output $output2
+    workspace 7 output $output1
+    workspace 8 output $output2
+    workspace 9 output $output1
+    workspace 10 output $output2
 #
 # Layout stuff:
 #
@@ -157,7 +208,7 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
     # Swap focus between the tiling area and the floating area
     bindsym $mod+space focus mode_toggle
 
-    # move focus to the parent container
+    # Move focus to the parent container
     bindsym $mod+a focus parent
 #
 # Scratchpad:
@@ -172,6 +223,28 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
     # If there are multiple scratchpad windows, this command cycles through them.
     bindsym $mod+minus scratchpad show
 #
+# Mine:
+#
+    # switch workspace
+    bindsym Mod1+Tab workspace back_and_forth
+
+    # launch browser
+    bindsym $mod+backspace exec chromium
+    # bindsym $mod+backspace exec qutebrowser --qt-flag disable-gpu
+
+    # set volume
+    bindsym Control+Mod1+Down exec amixer sset Master 5%-
+    bindsym Control+Mod1+Up exec amixer sset Master 5%+
+    bindsym Control+Mod1+m exec amixer sset Master toggle
+
+    # set gap
+    bindsym Control+Mod1+minus gaps inner current plus 8
+    bindsym Control+Mod1+equal gaps inner current minus 8
+    bindsym Control+Mod1+0 gaps inner current set 0
+
+    # lock screen
+    bindsym Control+Mod1+q exec swaylock -f -c 000000
+#
 # Resizing containers:
 #
 mode "resize" {
@@ -184,20 +257,19 @@ mode "resize" {
     bindsym $up resize shrink height 10px
     bindsym $right resize grow width 10px
 
-    # ditto, with arrow keys
+    # Ditto, with arrow keys
     bindsym Left resize shrink width 10px
     bindsym Down resize grow height 10px
     bindsym Up resize shrink height 10px
     bindsym Right resize grow width 10px
 
-    # return to default mode
+    # Return to default mode
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
 bindsym $mod+r mode "resize"
 
-default_border pixel 0
-hide_edge_borders both
+default_border none
 focus_follows_mouse no
 
 #
@@ -211,13 +283,20 @@ bar {
     # The default just shows the current date and time.
     status_command while date +'%Y-%m-%d %H:%M:%S'; do sleep 1; done
 
+    height 20
+
+    workspace_min_width 32
+
+    tray_output none
+
     colors {
-        statusline #ffffff
+        statusline #dddddd
         background #323232
-        inactive_workspace #32323200 #32323200 #5c5c5c
+        focused_workspace #dddddd #dddddd #323232
+        inactive_workspace #323232 #323232 #dddddd
     }
 }
 
 include /etc/sway/config.d/*
 
-exec fcitx
+exec --no-startup-id fcitx5 -d

@@ -1,0 +1,37 @@
+#! /bin/bash
+
+# exit when any command fails
+set -e
+
+secrets=$HOME/.secrets.json
+
+host=`jq -r .nas.host $secrets`
+username=`jq -r .nas.username $secrets`
+password=`jq -r .nas.password $secrets`
+local_path=$HOME/nas
+shares=(`jq -r .nas.shares $secrets | tr -d '[],"'`)
+me=`whoami`
+
+for i in ${shares[*]}
+do
+    local_dir=$local_path/$i
+
+    # umount
+    if [ $# -eq 1 ] && [ $1 = "-u" ]
+    then
+        if [ -d $local_dir ]
+        then
+            sudo umount $local_dir
+            echo $local_dir umounted!
+        fi
+
+    # mount
+    else
+        if [ ! -d $local_dir ]
+        then
+            mkdir $local_dir
+        fi
+        sudo mount -t cifs //$host/$i $local_path/$i -o username=$username,password=$password,uid=$me,gid=$me
+        echo $local_dir mounted!
+    fi
+done

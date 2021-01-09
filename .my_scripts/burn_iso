@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# exit when any command fails
+set -e
+
+# commands nee to use
+depended_cmds=(mkfs.vfat dd stat cmp)
+
+# start to check depended cmds
+for i in ${depended_cmds[*]}
+do
+    if ! command -v $i &> /dev/null
+    then
+        echo "We need $i to work, please install it."
+        exit
+    fi
+done
+# check finished
+
+
+# format the usb device
+echo formating $2...
+(set -x; sudo mkfs.vfat -I $2)
+
+echo --------------------------------------------------------------------
+
+# copy image to usb device
+echo copying $1 to $2...
+(set -x; sudo dd bs=1M if=$1 of=$2 status=progress conv=fsync)
+
+echo --------------------------------------------------------------------
+
+# validate if same as original data
+echo validating...
+size=`stat -c '%s' $1`
+validate_result=`(set -x; sudo cmp -n $size $1 $2)`
+echo $validate_result
+if [ "$validate_result" = "" ]
+then
+    echo succeed!!!
+else
+    echo validation failed
+fi
