@@ -18,7 +18,21 @@ set $term alacritty
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
-set $menu wofi -S run | dmenu_path | dmenu | xargs swaymsg exec --
+# set $menu wofi -S run | dmenu_path | dmenu | xargs swaymsg exec --
+set $menu bemenu-run \
+            --prompt launch \
+            --line-height 20 \
+            --cw 1 \
+            --ch 14 \
+            --hp 14 \
+            --width-factor 0.7 \
+            --tb "#64727D" \
+            --tf "#ffffff" \
+            --fb "#2B303B" \
+            --nb "#2B303B" \
+            --ab "#2B303B" \
+            --hb "#64727D" \
+            --hf "#ffffff" | xargs swaymsg exec --
 
 ### Output configuration
 #
@@ -52,10 +66,9 @@ focus output $output1
 # your displays after another 300 seconds, and turn your screens back on when
 # resumed. It will also lock your screen before your computer goes to sleep.
 
-# exec swayidle -w \
-#          timeout 300 'swaylock -f -c 000000' \
-#          timeout 315 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
-#          before-sleep 'swaylock -f -c 000000'
+ exec swayidle -w \
+          timeout 10 'if pgrep -x swaylock; then swaymsg "output * power off"; fi' \
+          resume 'swaymsg "output * power on"'
 
 ### Input configuration
 #
@@ -176,14 +189,14 @@ input "type:touchpad" {
 
     # Bind workspaces to outputs
     workspace 1 output $output1
-    workspace 2 output $output2
+    workspace 2 output $output1
     workspace 3 output $output1
-    workspace 4 output $output2
+    workspace 4 output $output1
     workspace 5 output $output1
-    workspace 6 output $output2
+    workspace 6 output $output1
     workspace 7 output $output1
-    workspace 8 output $output2
-    workspace 9 output $output1
+    workspace 8 output $output1
+    workspace 9 output $output2
     workspace 10 output $output2
 #
 # Layout stuff:
@@ -233,9 +246,12 @@ input "type:touchpad" {
     # bindsym $mod+backspace exec qutebrowser --qt-flag disable-gpu
 
     # set volume
-    bindsym Control+Mod1+Down exec amixer sset Master 5%-
-    bindsym Control+Mod1+Up exec amixer sset Master 5%+
-    bindsym Control+Mod1+m exec amixer sset Master toggle
+    bindsym Control+Mod1+Down exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+    bindsym Control+Mod1+Up exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+    bindsym Control+Mod1+m exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+    # bindsym Control+Mod1+Down exec amixer sset Master 5%-
+    # bindsym Control+Mod1+Up exec amixer sset Master 5%+
+    # bindsym Control+Mod1+m exec amixer sset Master toggle
 
     # set gap
     bindsym Control+Mod1+minus gaps inner current plus 8
@@ -277,24 +293,25 @@ focus_follows_mouse no
 #
 # Read `man 5 sway-bar` for more information about this section.
 bar {
-    position top
+    swaybar_command waybar
+#     position top
 
     # When the status_command prints a new line to stdout, swaybar updates.
     # The default just shows the current date and time.
-    status_command while date +'%Y-%m-%d %H:%M:%S'; do sleep 1; done
+#     status_command while date +'%Y-%m-%d %H:%M:%S'; do sleep 1; done
 
-    height 20
+#     height 20
 
-    workspace_min_width 32
+#     workspace_min_width 32
 
-    tray_output none
+#     tray_output none
 
-    colors {
-        statusline #dddddd
-        background #323232
-        focused_workspace #dddddd #dddddd #323232
-        inactive_workspace #323232 #323232 #dddddd
-    }
+#     colors {
+#         statusline #dddddd
+#         background #323232
+#         focused_workspace #dddddd #dddddd #323232
+#         inactive_workspace #323232 #323232 #dddddd
+#     }
 }
 
 include /etc/sway/config.d/*

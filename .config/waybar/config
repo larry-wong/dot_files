@@ -1,0 +1,36 @@
+[{
+    "layer": "top",
+    "output": "HDMI-A-2",
+    "modules-left": ["sway/workspaces", "sway/mode"],
+    "modules-right": ["cpu", "memory", "disk", "wireplumber", "clock"],
+    "cpu": {
+        "format": "CPU: {usage}%"
+    },
+    "memory": {
+        "interval": 10,
+        "format": "RAM: {percentage}%"
+    },
+    "disk": {
+        "format": "Disk: {percentage_used}%"
+    },
+    "wireplumber": {
+        "format": "{node_name}: {volume:2}%",
+        "format-muted": "{node_name} MUTED",
+        "tooltip": false
+    },
+    "clock": {
+        "interval": 1,
+        "format": "{:%H:%M:%S}",
+        "tooltip-format": "{:%F  %a}"
+    }
+}, {
+    "layer": "top",
+    "output": "!HDMI-A-2",
+    "modules-left": ["sway/workspaces", "sway/mode"],
+    "modules-right": ["clock"],
+    "clock": {
+        "interval": 1,
+        "format": "{:%F %H:%M:%S}",
+        "tooltip": false
+    }
+}]

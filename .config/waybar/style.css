@@ -1,0 +1,74 @@
+* {
+    font-family: "Noto Sans Mono";
+    font-size: 13px;
+}
+
+window#waybar {
+    background-color: rgba(43, 48, 59, 0.5);
+    color: #ffffff;
+}
+
+button {
+    box-shadow: inset 0 -1px transparent;
+    border: none;
+    border-radius: 0;
+}
+
+/* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
+button:hover {
+    background: inherit;
+    box-shadow: inset 0 -1px #ffffff;
+}
+
+#workspaces button {
+    padding: 0px 8px;
+    background-color: transparent;
+    color: #ffffff;
+    min-height: 20px;
+}
+
+#workspaces button:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+#workspaces button.focused {
+    background-color: #64727D;
+    box-shadow: inset 0 -1px #ffffff;
+}
+
+#workspaces button.urgent {
+    background-color: #eb4d4b;
+}
+
+#mode {
+    background-color: #64727D;
+    box-shadow: inset 0 -1px #ffffff;
+}
+
+#clock,
+#cpu,
+#memory,
+#disk,
+#wireplumber,
+#mode {
+    padding: 0px 10px;
+}
+
+#window,
+#workspaces {
+    margin: 0 4px;
+}
+
+/* If workspaces is the leftmost module, omit left margin */
+.modules-left > widget:first-child > #workspaces {
+    margin-left: 0;
+}
+
+/* If workspaces is the rightmost module, omit right margin */
+.modules-right > widget:last-child > #workspaces {
+    margin-right: 0;
+}
+
+#wireplumber.muted {
+    color: #f53c3c;
+}
